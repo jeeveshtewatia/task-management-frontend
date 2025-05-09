@@ -54,7 +54,7 @@ const RegisterForm = () => {
         setIsLoading(false)
         router.push('/tasks')
       }, 1000)
-    } catch (err: any) {
+    } catch {
       setApiError('Registration failed. Please try again.')
       setIsLoading(false)
     }

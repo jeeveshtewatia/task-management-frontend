@@ -99,8 +99,12 @@ export default function DashboardPage() {
         overdueTasks: data.overdueTasks || 0
       }
       setAnalytics(formattedData)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch analytics')
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'message' in err.response.data) {
+        setError((err.response as { data?: { message?: string } }).data?.message || 'Failed to fetch analytics')
+      } else {
+        setError('Failed to fetch analytics')
+      }
     } finally {
       setIsLoading(false)
     }

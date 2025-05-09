@@ -2,6 +2,25 @@
 
 import { useState } from 'react'
 
+// Define Task interface here
+// interface Task {
+//   _id: string
+//   title: string
+//   description?: string
+//   dueDate?: string
+//   priority: string
+//   status: string
+// }
+
+// Define TaskFormData for form submission
+interface TaskFormData {
+  title: string
+  description?: string
+  dueDate?: string
+  priority: string
+  status: string
+}
+
 interface TaskFormProps {
     initialData?: {
         title: string;
@@ -9,7 +28,7 @@ interface TaskFormProps {
         dueDate?: string;
         priority?: string;
     };
-    onSubmit: (data: any) => void;
+    onSubmit: (data: TaskFormData) => void;
     isLoading?: boolean;
 }
 
@@ -23,7 +42,7 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
+        onSubmit({ ...formData, status: 'Pending' });
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { tasks } from '@/lib/api'
 import { TaskModal } from '@/components/TaskModal'
 import { TaskItem } from '@/components/TaskItem'
@@ -89,8 +89,12 @@ export default function TasksPage() {
       const response = await tasks.getAll(params.toString())
       setTaskList(response.tasks)
       setPagination(response.pagination)
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to fetch tasks')
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'message' in err.response.data) {
+        setError((err.response as { data?: { message?: string } }).data?.message || 'Failed to fetch tasks')
+      } else {
+        setError('Failed to fetch tasks')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -98,10 +102,6 @@ export default function TasksPage() {
 
   const handleTaskUpdate = async (updatedTask: Task, mode: 'create' | 'edit' | 'view') => {
     try {
-      console.log('Modal Mode:', mode);
-      console.log('Selected Task:', selectedTask);
-      console.log('Updated Task:', updatedTask);
-
       if (mode === 'create') {
         const createData: CreateTaskData = {
           title: updatedTask.title,
@@ -113,10 +113,7 @@ export default function TasksPage() {
         const result = await tasks.create(createData)
         setTaskList(prevTasks => [result, ...prevTasks])
       } else if (mode === 'edit') {
-        // For edit mode, we should use the task's own ID
         const taskId = updatedTask._id;
-        console.log('Updating task with ID:', taskId);
-        
         const updateData = {
           title: updatedTask.title,
           description: updatedTask.description,
@@ -124,10 +121,7 @@ export default function TasksPage() {
           priority: updatedTask.priority,
           status: updatedTask.status
         }
-        
         const result = await tasks.update(taskId, updateData)
-        console.log('Update result:', result);
-        
         setTaskList(prevTasks =>
           prevTasks.map(task => (task._id === taskId ? result : task))
         )
@@ -135,9 +129,12 @@ export default function TasksPage() {
       setIsModalOpen(false)
       setSelectedTask(null)
       setModalMode('create')
-    } catch (err: any) {
-      console.error('Error updating task:', err);
-      setError(err.response?.data?.message || 'Failed to save task')
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'message' in err.response.data) {
+        setError((err.response as { data?: { message?: string } }).data?.message || 'Failed to save task')
+      } else {
+        setError('Failed to save task')
+      }
     }
   }
 
@@ -145,8 +142,12 @@ export default function TasksPage() {
     try {
       await tasks.delete(taskId)
       setTaskList(prevTasks => prevTasks.filter(task => task._id !== taskId))
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to delete task')
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'message' in err.response.data) {
+        setError((err.response as { data?: { message?: string } }).data?.message || 'Failed to delete task')
+      } else {
+        setError('Failed to delete task')
+      }
     }
   }
 
@@ -156,16 +157,13 @@ export default function TasksPage() {
       setTaskList(prevTasks =>
         prevTasks.map(task => (task._id === taskId ? updatedTask : task))
       )
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update task status')
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'message' in err.response.data) {
+        setError((err.response as { data?: { message?: string } }).data?.message || 'Failed to update task status')
+      } else {
+        setError('Failed to update task status')
+      }
     }
-  }
-
-  const handleSort = (field: string) => {
-    setSortConfig(prev => ({
-      field,
-      order: prev.field === field && prev.order === 'asc' ? 'desc' : 'asc'
-    }))
   }
 
   const handleAddTask = () => {
@@ -178,12 +176,6 @@ export default function TasksPage() {
       status: 'Pending'
     })
     setModalMode('create')
-    setIsModalOpen(true)
-  }
-
-  const handleEditTask = async (task: Task) => {
-    setSelectedTask(task)
-    setModalMode('edit')
     setIsModalOpen(true)
   }
 

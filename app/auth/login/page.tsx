@@ -78,7 +78,7 @@ const LoginForm = () => {
       setIsLoading(true)
       await login(formData.email, formData.password)
       router.push('/tasks')
-    } catch (err) {
+    } catch {
       setErrors({
         email: 'Invalid email or password',
         password: 'Invalid email or password',
@@ -194,7 +194,7 @@ const LoginForm = () => {
               <div className="flex-grow border-t border-gray-200 dark:border-gray-700" />
             </div>
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/auth/register" className="font-medium text-blue-600 dark:text-blue-400 hover:underline">Register</Link>
             </p>
           </div>
